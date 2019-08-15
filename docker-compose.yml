@@ -1,0 +1,18 @@
+version: "3"
+services:
+  database:
+    image: postgres:11.4-alpine
+    volumes:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: homekitchen-db-user
+      POSTGRES_DB: homekitchen-db
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    command: ./start.sh
+    volumes:
+      - .:/code
+    depends_on:
+      - database
