@@ -23,4 +23,4 @@ jobs:
       - run:
           name: Running in the python container
           command: |
-          python -V
+            python -V
