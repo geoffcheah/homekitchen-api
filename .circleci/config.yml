@@ -17,18 +17,24 @@ jobs:
     steps:
       - checkout
 
-  install_dependencies:
-    <<: *docker_images
-    steps:
-      - run:
-          name: Make sure pip at latest version
-          command: pip install --upgrade pip
-      - run:
-          name: Install pipenv
-          command: pip install pipenv
-      - run:
-          name: Install dependencies
-          command: pipenv install
+  # install_dependencies:
+  #   <<: *docker_images
+  #   steps:
+  #     - run:
+  #         name: Make sure pip at latest version
+  #         command: pip install --upgrade pip
+  #     - run:
+  #         name: Install pipenv
+  #         command: pip install pipenv
+  #     - run:
+  #         name: Install dependencies
+  #         command: pipenv install --dev
+  # run_migrations:
+  #   <<: *docker_images
+  #   steps:
+  #     - run:
+  #         name: Run migrations
+  #         command: pipenv run manage.py migrate
 
   deploy_staging:
     <<: *docker_images
@@ -50,9 +56,9 @@ jobs:
               branches:
                 only:
                   - master
-        - install_dependencies:
+        # - install_dependencies:
+        #     requires:
+        #       - checkout_code
+        - deploy_staging:
             requires:
               - checkout_code
-        - deploy_staging:
-            requres:
-              - install_dependencies
