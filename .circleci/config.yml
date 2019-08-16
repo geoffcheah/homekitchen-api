@@ -23,10 +23,10 @@ jobs:
       - run:
           name: Make sure pip at latest version
           command: pip install --upgrade pip
-      -run:
+      - run:
           name: Install pipenv
           command: pip install pipenv
-      -run:
+      - run:
           name: Install dependencies
           command: pipenv install
 
