@@ -1,26 +1,58 @@
-version: 2.0
-jobs:
-  build:
-    docker:
-      - image: circleci/python:3.7
+version: 2.1
+orbs:
+  heroku: circleci/heroku@1.0.0
 
-      - image: postgres:11.4-alpine
-        environment:
-          POSTGRES_USER: ci-db-user
-          POSTGRES_DB: ci-db
+docker_images: &docker_images
+  docker:
+    - image: circleci/python:3.7
+
+    - image: postgres:11.4-alpine
+      environment:
+        POSTGRES_USER: ci-db-user
+        POSTGRES_DB: ci-db
+
+jobs:
+  checkout_code:
+    <<: *docker_images
     steps:
       - checkout
+
+  install_dependencies:
+    <<: *docker_images
+    steps:
       - run:
-          name: The First Step
-          command: |
-            echo 'Hello World!'
-            echo 'This is the delivery pipeline'
-      - run:
-          name: Code Has Arrived
-          command: |
-            ls -al
-            echo '^^^That should look familiar^^^'
-      - run:
-          name: Running in the python container
-          command: |
-            python -V
+          name: Make sure pip at latest version
+          command: pip install --upgrade pip
+      -run:
+          name: Install pipenv
+          command: pip install pipenv
+      -run:
+          name: Install dependencies
+          command: pipenv install
+
+  deploy_staging:
+    <<: *docker_images
+    executor: heroku/default
+
+    steps:
+      - checkout
+      - heroku/install
+      - heroku/deploy-via-git:
+          only-branch: master
+          app-name: homekitchen-api-staging
+
+  workflows:
+    version: 2.1
+    build-and-deploy:
+      jobs:
+        - checkout_code
+          filters:
+            branches:
+              only:
+                - master
+        - install_dependencies:
+            requires:
+              - checkout_code
+        - deploy_staging
+            requres:
+              - install_dependencies
