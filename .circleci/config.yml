@@ -17,25 +17,6 @@ jobs:
     steps:
       - checkout
 
-  # install_dependencies:
-  #   <<: *docker_images
-  #   steps:
-  #     - run:
-  #         name: Make sure pip at latest version
-  #         command: pip install --upgrade pip
-  #     - run:
-  #         name: Install pipenv
-  #         command: pip install pipenv
-  #     - run:
-  #         name: Install dependencies
-  #         command: pipenv install --dev
-  # run_migrations:
-  #   <<: *docker_images
-  #   steps:
-  #     - run:
-  #         name: Run migrations
-  #         command: pipenv run manage.py migrate
-
   deploy_staging:
     <<: *docker_images
     executor: heroku/default
@@ -46,19 +27,3 @@ jobs:
       - heroku/deploy-via-git:
           only-branch: master
           app-name: homekitchen-api-staging
-
-  # workflows:
-  #   version: 2.1
-  #   build-and-deploy:
-  #     jobs:
-  #       - checkout_code:
-  #           filters:
-  #             branches:
-  #               only:
-  #                 - master
-  #       - install_dependencies:
-  #           requires:
-  #             - checkout_code
-  #       - deploy_staging:
-  #           requires:
-  #             - checkout_code
