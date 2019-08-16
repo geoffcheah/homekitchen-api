@@ -53,6 +53,6 @@ jobs:
         - install_dependencies:
             requires:
               - checkout_code
-        - deploy_staging
+        - deploy_staging:
             requres:
               - install_dependencies
