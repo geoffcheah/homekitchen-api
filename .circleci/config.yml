@@ -20,10 +20,22 @@ jobs:
   deploy_staging:
     <<: *docker_images
     executor: heroku/default
-
     steps:
       - checkout
       - heroku/install
       - heroku/deploy-via-git:
           only-branch: master
           app-name: homekitchen-api-staging
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              only:
+                - master
+      - deploy_staging:
+          requires:
+            - checkout_code
